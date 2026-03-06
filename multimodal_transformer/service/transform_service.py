@@ -4,6 +4,7 @@ from multimodal_transformer.extractors.pdf_extractor import PDFExtractor
 from multimodal_transformer.extractors.audio_extractor import AudioExtractor
 from multimodal_transformer.extractors.image_extractor import ImageExtractor
 from multimodal_transformer.extractors.video_extractor import VideoExtractor
+from multimodal_transformer.extractors.text_extractor import TextExtractor
 
 from multimodal_transformer.embeddings.text_embedding import TextEmbedder
 from multimodal_transformer.embeddings.image_embedding import ImageEmbedder
@@ -32,6 +33,9 @@ class TransformService:
 
         if "video" in mime:
             return "video"
+        
+        if "text" in mime:
+            return "text"
 
         raise ValueError("Unsupported type")
 
@@ -43,6 +47,12 @@ class TransformService:
         if file_type == "pdf":
 
             text = PDFExtractor.extract_text(path)
+            embedding = TextEmbedder.embed(text)
+            sentiment = MarketSentiment.compute(text)
+
+        elif file_type == "text":
+
+            text = TextExtractor.extract_text(path)
             embedding = TextEmbedder.embed(text)
             sentiment = MarketSentiment.compute(text)
 
